@@ -6,12 +6,12 @@
 #    By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/10 12:32:12 by nettalha          #+#    #+#              #
-#    Updated: 2023/03/22 21:52:38 by nettalha         ###   ########.fr        #
+#    Updated: 2023/03/27 17:23:36 by nettalha         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= philo
-SRCS		= philo.c philo_utils.c utils.c
+SRCS		= philo.c philo_utils1.c philo_utils2.c utils.c
 OBJS		= ${SRCS:.c=.o}
 
 CC		= gcc
