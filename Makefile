@@ -6,12 +6,12 @@
 #    By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/10 12:32:12 by nettalha          #+#    #+#              #
-#    Updated: 2023/03/22 21:52:38 by nettalha         ###   ########.fr        #
+#    Updated: 2023/03/28 22:36:16 by nettalha         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= philo
-SRCS		= philo.c philo_utils.c utils.c
+SRCS		= philo.c philo_utils1.c philo_utils2.c utils.c
 OBJS		= ${SRCS:.c=.o}
 
 CC		= gcc
@@ -21,7 +21,7 @@ RM		= rm -f
 all:		${NAME}
 
 ${NAME}:	${OBJS}
-			$(CC) $^ -o $@
+			$(CC) $(CFLAGS) $^ -o $@
 
 clean:
 			$(RM) ${OBJS}
