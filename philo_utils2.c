@@ -6,7 +6,7 @@
 /*   By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 22:40:54 by nettalha          #+#    #+#             */
-/*   Updated: 2023/03/28 22:49:54 by nettalha         ###   ########.fr       */
+/*   Updated: 2023/04/10 18:32:06 by nettalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	threads_create(t_philo *philos, pthread_t *threads)
 		}
 		i++;
 	}
+	ft_usleep(1);
 }
 
 void	threads_join(t_philo *philos, pthread_t *threads)
@@ -49,6 +50,18 @@ void	threads_join(t_philo *philos, pthread_t *threads)
 	while (i < philos->nb_ph)
 	{
 		pthread_join(threads[i], NULL);
+		i++;
+	}
+}
+
+void	threads_detach(t_philo *philos, pthread_t *threads)
+{
+	int	i;
+
+	i = 0;
+	while (i < philos->nb_ph)
+	{
+		pthread_detach(threads[i]);
 		i++;
 	}
 }

@@ -6,21 +6,11 @@
 /*   By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 11:42:00 by nettalha          #+#    #+#             */
-/*   Updated: 2023/03/29 13:06:34 by nettalha         ###   ########.fr       */
+/*   Updated: 2023/04/10 18:41:18 by nettalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"philo.h"
-
-void	ft_free(t_philo *ph, t_mutex *mtx, pthread_t *th)
-{
-	free(th);
-	free(ph);
-	free(mtx);
-	free(mtx->forks);
-	free(mtx->mutex);
-	free(mtx->mutex0);
-}
 
 void	dine(t_philo *ph)
 {
@@ -47,7 +37,7 @@ void	*philos_routine(void *void_philo)
 	ph = (t_philo *)void_philo;
 	printf("%ld %d is thinking\n", get_time() - ph->start_time, ph->id);
 	if (ph->id % 2 == 0)
-		ft_usleep(1.5);
+		ft_usleep(1);
 	while (1)
 	{
 		dine(ph);
@@ -61,11 +51,11 @@ void	*philos_routine(void *void_philo)
 	}
 }
 
-void	mutex_malloc(t_mutex *mtx, t_info info)
+void	init_all(t_philo *ph, t_mutex *mtx, t_info info)
 {
 	mtx->forks = malloc(sizeof(pthread_mutex_t) * info.nb_ph);
-	mtx->mutex = malloc(sizeof(pthread_mutex_t) * info.nb_ph);
-	mtx->mutex0 = malloc(sizeof(pthread_mutex_t));
+	ft_init_vars(ph, &info);
+	ft_init_mutex(ph, &mtx->mutex, &mtx->mutex0, mtx->forks);
 }
 
 int	main(int ac, char **av)
@@ -81,17 +71,17 @@ int	main(int ac, char **av)
 		threads = malloc(sizeof(pthread_t) * info.nb_ph);
 		philo = malloc(sizeof(t_philo) * info.nb_ph);
 		mtx = malloc(sizeof(mtx));
-		mutex_malloc(mtx, info);
-		ft_init_vars(philo, &info);
-		ft_init_mutex(philo, mtx->mutex, mtx->mutex0, mtx->forks);
+		init_all(philo, mtx, info);
 		threads_create(philo, threads);
-		ft_usleep(10);
 		if (!is_died_or_full(philo, &info))
 		{
-			destroy_mutex(&info, mtx->forks, mtx->mutex);
+			threads_detach(philo, threads);
+			destroy_mutex(&info, mtx);
+			ft_free(philo, mtx, threads);
 			return (1);
 		}
 		threads_join(philo, threads);
+		destroy_mutex(&info, mtx);
 		ft_free(philo, mtx, threads);
 	}
 	return (0);

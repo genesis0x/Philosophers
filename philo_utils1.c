@@ -6,7 +6,7 @@
 /*   By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 12:14:47 by nettalha          #+#    #+#             */
-/*   Updated: 2023/03/28 22:51:25 by nettalha         ###   ########.fr       */
+/*   Updated: 2023/04/10 18:40:14 by nettalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int	is_died_or_full(t_philo *ph, t_info *info)
 			{
 				pthread_mutex_lock(ph->mutex);
 				printf("%ld %d died\n", get_time() - ph[i].start_time, ph[i].id);
-				pthread_mutex_unlock(ph->mutex);
 				return (0);
 			}
 			if (ph[i].m != 0 && ph[i].m >= ph[i].nb_m && ph[i].nb_m != -1)
@@ -41,7 +40,7 @@ int	is_died_or_full(t_philo *ph, t_info *info)
 	}
 }
 
-void	ft_init_mutex(t_philo *ph, void	*m, void	*m0, pthread_mutex_t	*f)
+void	ft_init_mutex(t_philo *ph, void *m, void *m0, pthread_mutex_t *f)
 {
 	int	i;
 
@@ -61,9 +60,11 @@ void	ft_init_mutex(t_philo *ph, void	*m, void	*m0, pthread_mutex_t	*f)
 
 void	ft_init_vars(t_philo *ph, t_info *info)
 {
-	int	i;
+	int		i;
+	long	time;
 
 	i = 0;
+	time = get_time();
 	while (i < info->nb_ph)
 	{
 		ph[i].id = i + 1;
@@ -71,7 +72,7 @@ void	ft_init_vars(t_philo *ph, t_info *info)
 		ph[i].last_meal = 0;
 		ph[i].nb_m = info->nb_meals;
 		ph[i].nb_ph = info->nb_ph;
-		ph[i].start_time = get_time();
+		ph[i].start_time = time;
 		ph[i].t_to_die = info->time_to[0];
 		ph[i].t_to_eat = info->time_to[1];
 		ph[i].t_to_sleep = info->time_to[2];
@@ -79,15 +80,24 @@ void	ft_init_vars(t_philo *ph, t_info *info)
 	}
 }
 
-void	destroy_mutex(t_info *info, pthread_mutex_t	*f, pthread_mutex_t	*m)
+void	destroy_mutex(t_info *info, t_mutex	*mtx)
 {
 	int	i;
 
 	i = 0;
 	while (i < info->nb_ph)
 	{
-		pthread_mutex_destroy(&f[i]);
-		pthread_mutex_destroy(&m[i]);
+		pthread_mutex_destroy(&mtx->forks[i]);
 		i++;
 	}
+	pthread_mutex_destroy(&mtx->mutex);
+	pthread_mutex_destroy(&mtx->mutex0);
+}
+
+void	ft_free(t_philo *ph, t_mutex *mtx, pthread_t *th)
+{
+	free(th);
+	free(ph);
+	free(mtx->forks);
+	free(mtx);
 }

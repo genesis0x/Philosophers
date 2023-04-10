@@ -6,7 +6,7 @@
 /*   By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 11:41:56 by nettalha          #+#    #+#             */
-/*   Updated: 2023/03/29 13:04:57 by nettalha         ###   ########.fr       */
+/*   Updated: 2023/04/10 18:39:40 by nettalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ typedef struct s_info
 typedef struct s_mutex
 {
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	*mutex;
-	pthread_mutex_t	*mutex0;
+	pthread_mutex_t	mutex;
+	pthread_mutex_t	mutex0;
 }t_mutex;
 
 long	get_time(void);
@@ -57,10 +57,11 @@ int		ft_atoi(const char *str);
 int		check_args(char **av);
 void	init_vars(char **av, t_info *info);
 void	ft_init_vars(t_philo *ph, t_info *info);
-void	destroy_mutex(t_info *info, pthread_mutex_t	*f, pthread_mutex_t	*m);
+void	destroy_mutex(t_info *info, t_mutex	*mtx);
 void	ft_free(t_philo *ph, t_mutex *mtx, pthread_t *th);
 void	ft_init_mutex(t_philo *ph, void	*m, void *m0, pthread_mutex_t *f);
 void	threads_create(t_philo *philos, pthread_t	*threads);
 void	threads_join(t_philo *philos, pthread_t *threads);
+void	threads_detach(t_philo *philos, pthread_t *threads);
 void	*philos_routine(void *void_philo);
 #endif
