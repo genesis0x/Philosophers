@@ -21,19 +21,19 @@ int	is_died_or_full(t_philo *ph, t_info *info)
 	{
 		i = 0;
 		n = 0;
-		while (i < ph->nb_ph)
+		while (i < ph[i].nb_ph)
 		{
-			pthread_mutex_lock(ph[i].mutex1);
+			//pthread_mutex_lock(ph[i].mtx->mutex1);
 			if (get_time() - ph[i].last_meal >= ph[i].t_to_die)
 			{
-				pthread_mutex_lock(ph->mutex2);
+				//pthread_mutex_lock(ph[i].mtx->mutex2);
 				printf("%ld %d died\n", get_time() - ph[i].start_time, ph[i].id);
 				//pthread_mutex_unlock(ph[i].mutex);
 				return (0);
 			}
 			if (ph[i].m != 0 && ph[i].m >= ph[i].nb_m && ph[i].nb_m != -1)
 				n++;
-			pthread_mutex_unlock(ph[i].mutex1);
+			//pthread_mutex_unlock(ph[i].mtx->mutex1);
 			i++;
 		}
 		if (n == info->nb_ph)
@@ -41,20 +41,22 @@ int	is_died_or_full(t_philo *ph, t_info *info)
 	}
 }
 
-void	ft_init_mutex(t_philo *ph, pthread_mutex_t m1, pthread_mutex_t m2, pthread_mutex_t *f)
+void	ft_init_mutex(t_philo *ph)
 {
 	int	i;
-
-	pthread_mutex_init(&m1, NULL);
-	pthread_mutex_init(&m2, NULL);
+	ph->mtx->forks = malloc(sizeof(pthread_mutex_t) * ph->nb_ph);
+	ph->mtx->mutex1 = malloc(sizeof(pthread_mutex_t));
+	//ph->mtx->mutex2 = malloc(sizeof(pthread_mutex_t));
+	if ((pthread_mutex_init(ph->mtx->mutex1, NULL)) < 0)
+		printf("init failed\n");
+	//if (pthread_mutex_init(ph->mtx->mutex2, NULL) < 0)
+	//	printf("init failed\n");
 	i = 0;
-	while (i < ph[i].nb_ph)
+	while (i < ph->nb_ph)
 	{
-		ph[i].mutex1 = &m1;
-		ph[i].mutex2 = &m2;
-		pthread_mutex_init(&f[i], NULL);
-		ph[i].right_fork = &f[i];
-		ph[i].left_fork = &f[(i + 1) % ph[i].nb_ph];
+		pthread_mutex_init(&ph->mtx->forks[i], NULL);
+		ph[i].right_fork = &ph->mtx->forks[i];
+		ph[i].left_fork = &ph->mtx->forks[(i + 1) % ph->nb_ph];
 		i++;
 	}
 }
@@ -91,8 +93,8 @@ void	destroy_mutex(t_info *info, t_mutex	*mtx)
 		pthread_mutex_destroy(&mtx->forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&mtx->mutex1);
-	pthread_mutex_destroy(&mtx->mutex2);
+	pthread_mutex_destroy(mtx->mutex1);
+	//pthread_mutex_destroy(mtx->mutex2);
 }
 
 void	ft_free(t_philo *ph, t_mutex *mtx, pthread_t *th)

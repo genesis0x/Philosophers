@@ -30,10 +30,9 @@ typedef struct s_philo
 	int		nb_m;
 	int		m;
 	int		nb_ph;
-	pthread_mutex_t	*mutex1;
-	pthread_mutex_t	*mutex2;
 	void	*right_fork;
 	void	*left_fork;
+	struct s_mutex *mtx;
 }t_philo;
 
 typedef struct s_info
@@ -46,8 +45,8 @@ typedef struct s_info
 typedef struct s_mutex
 {
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	mutex1;
-	pthread_mutex_t	mutex2;
+	pthread_mutex_t	*mutex1;
+	pthread_mutex_t	*mutex2;
 }t_mutex;
 
 long	get_time(void);
@@ -59,7 +58,7 @@ void	init_vars(char **av, t_info *info);
 void	ft_init_vars(t_philo *ph, t_info *info);
 void	destroy_mutex(t_info *info, t_mutex	*mtx);
 void	ft_free(t_philo *ph, t_mutex *mtx, pthread_t *th);
-void	ft_init_mutex(t_philo *ph, pthread_mutex_t m1, pthread_mutex_t m2, pthread_mutex_t *f);
+void	ft_init_mutex(t_philo *ph);
 void	threads_create(t_philo *philos, pthread_t	*threads);
 void	threads_join(t_philo *philos, pthread_t *threads);
 void	threads_detach(t_philo *philos, pthread_t *threads);

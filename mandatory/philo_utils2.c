@@ -31,7 +31,7 @@ void	threads_create(t_philo *philos, pthread_t *threads)
 	while (i < philos->nb_ph)
 	{
 		philos[i].last_meal = get_time();
-		r = pthread_create(&threads[i], NULL, philos_routine, &philos[i]);
+		r = pthread_create(&threads[i], NULL, philos_routine, (void *)(&philos[i]));
 		if (r)
 		{
 			printf("Failed to create thread %d\n", i);
