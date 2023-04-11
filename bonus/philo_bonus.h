@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 11:41:56 by nettalha          #+#    #+#             */
-/*   Updated: 2023/04/10 18:39:40 by nettalha         ###   ########.fr       */
+/*   Updated: 2023/04/11 01:38:17 by nettalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include<unistd.h>
 # include<stdlib.h>
 # include<stdio.h>
 # include<pthread.h>
+# include<semaphore.h>
 # include<sys/time.h>
 
 typedef struct s_philo
@@ -30,10 +31,11 @@ typedef struct s_philo
 	int		nb_m;
 	int		m;
 	int		nb_ph;
-	void	*mutex;
-	void	*mutex0;
+	void	*sem0;
+	void	*sem1;
 	void	*right_fork;
 	void	*left_fork;
+	pid_t	*pid;
 }t_philo;
 
 typedef struct s_info
@@ -43,25 +45,25 @@ typedef struct s_info
 	int		nb_ph;
 }t_info;
 
-typedef struct s_mutex
+typedef struct s_sem
 {
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	mutex;
-	pthread_mutex_t	mutex0;
-}t_mutex;
+	sem_t	*forks;
+	sem_t	sem0;
+	sem_t	sem1;
+}t_sem;
 
 long	get_time(void);
 void	ft_usleep(float time);
-int		is_died_or_full(t_philo *ph, t_info *info);
+void	*is_died_or_full(void *void_ph);
 int		ft_atoi(const char *str);
 int		check_args(char **av);
 void	init_vars(char **av, t_info *info);
 void	ft_init_vars(t_philo *ph, t_info *info);
-void	destroy_mutex(t_info *info, t_mutex	*mtx);
-void	ft_free(t_philo *ph, t_mutex *mtx, pthread_t *th);
-void	ft_init_mutex(t_philo *ph, void	*m, void *m0, pthread_mutex_t *f);
-void	threads_create(t_philo *philos, pthread_t	*threads);
+void	destroy_sem(t_info *info, t_sem	*sem);
+void	ft_free(t_philo *ph, t_sem *sem, pthread_t *th);
+void	ft_init_sem(t_philo *ph, void	*s0, void *s1, sem_t *f);
+void	process_create(t_philo *philos);
 void	threads_join(t_philo *philos, pthread_t *threads);
 void	threads_detach(t_philo *philos, pthread_t *threads);
-void	*philos_routine(void *void_philo);
+void	*philos_routine(t_philo *ph);
 #endif

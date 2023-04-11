@@ -1,57 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_utils1.c                                     :+:      :+:    :+:   */
+/*   philo_bonus_utils1.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/12 12:14:47 by nettalha          #+#    #+#             */
-/*   Updated: 2023/04/10 18:40:14 by nettalha         ###   ########.fr       */
+/*   Created: 2023/04/10 22:40:42 by nettalha          #+#    #+#             */
+/*   Updated: 2023/04/11 01:32:46 by nettalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"philo.h"
+#include"philo_bonus.h"
 
-int	is_died_or_full(t_philo *ph, t_info *info)
+void	*is_died_or_full(void *void_ph)
 {
-	int	i;
-	int	n;
+	t_philo	*ph;
 
+	ph = (t_philo *)void_ph;
 	while (1)
 	{
-		i = 0;
-		n = 0;
-		while (i < ph->nb_ph)
+		sem_wait(ph->sem1);
+		if (get_time() - ph->last_meal >= ph->t_to_die)
 		{
-			pthread_mutex_lock(ph[i].mutex0);
-			if (get_time() - ph[i].last_meal >= ph[i].t_to_die)
-			{
-				pthread_mutex_lock(ph->mutex);
-				printf("%ld %d died\n", get_time() - ph[i].start_time, ph[i].id);
-				return (0);
-			}
-			if (ph[i].m != 0 && ph[i].m >= ph[i].nb_m && ph[i].nb_m != -1)
-				n++;
-			pthread_mutex_unlock(ph[i].mutex0);
-			i++;
+			sem_wait(ph->sem0);
+			printf("%ld %d died\n", get_time() - ph->start_time, ph->id);
+			exit(0);
 		}
-		if (n == info->nb_ph)
-			return (0);
+		if (ph->m != 0 && ph->m >= ph->nb_m && ph->nb_m != -1)
+			exit(0);
+		sem_post(ph->sem1);
 	}
 }
 
-void	ft_init_mutex(t_philo *ph, void *m, void *m0, pthread_mutex_t *f)
+void	ft_init_sem(t_philo *ph, void *s0, void *s1, sem_t *f)
 {
 	int	i;
 
-	pthread_mutex_init(m0, NULL);
-	pthread_mutex_init(m, NULL);
+	sem_open(s0, 1, 1);
+	sem_open(s1, 1, 1);
 	i = 0;
 	while (i < ph[i].nb_ph)
 	{
-		ph[i].mutex = m;
-		ph[i].mutex0 = m0;
-		pthread_mutex_init(&f[i], NULL);
+		ph[i].sem0 = s0;
+		ph[i].sem1 = s1;
+		sem_open((void*)&f[i], 1, 1);
 		ph[i].right_fork = &f[i];
 		ph[i].left_fork = &f[(i + 1) % ph[i].nb_ph];
 		i++;
@@ -80,24 +72,24 @@ void	ft_init_vars(t_philo *ph, t_info *info)
 	}
 }
 
-void	destroy_mutex(t_info *info, t_mutex	*mtx)
+void	destroy_sem(t_info *info, t_sem	*sem)
 {
 	int	i;
 
 	i = 0;
 	while (i < info->nb_ph)
 	{
-		pthread_mutex_destroy(&mtx->forks[i]);
+		sem_close(&sem->forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&mtx->mutex);
-	pthread_mutex_destroy(&mtx->mutex0);
+	sem_close(&sem->sem0);
+	sem_close(&sem->sem1);
 }
 
-void	ft_free(t_philo *ph, t_mutex *mtx, pthread_t *th)
+void	ft_free(t_philo *ph, t_sem *sem, pthread_t *th)
 {
 	free(th);
 	free(ph);
-	free(mtx->forks);
-	free(mtx);
+	free(sem->forks);
+	free(sem);
 }

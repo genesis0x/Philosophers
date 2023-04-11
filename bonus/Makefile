@@ -5,13 +5,13 @@
 #                                                     +:+ +:+         +:+      #
 #    By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/03/10 12:32:12 by nettalha          #+#    #+#              #
-#    Updated: 2023/03/31 15:39:36 by nettalha         ###   ########.fr        #
+#    Created: 2023/04/10 22:39:57 by nettalha          #+#    #+#              #
+#    Updated: 2023/04/10 22:40:01 by nettalha         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= philo
-SRCS		= philo.c philo_utils1.c philo_utils2.c utils.c
+NAME		= philo_bonus
+SRCS		= philo_bonus.c philo_bonus_utils1.c  philo_bonus_utils2.c bonus_utils.c
 OBJS		= ${SRCS:.c=.o}
 
 CC		= gcc

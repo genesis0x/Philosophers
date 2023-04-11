@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_utils2.c                                     :+:      :+:    :+:   */
+/*   philo_bonus_utils2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nettalha <nettalha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/25 22:40:54 by nettalha          #+#    #+#             */
-/*   Updated: 2023/04/10 18:32:06 by nettalha         ###   ########.fr       */
+/*   Created: 2023/04/10 22:40:58 by nettalha          #+#    #+#             */
+/*   Updated: 2023/04/11 01:41:15 by nettalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"philo.h"
+#include"philo_bonus.h"
 
 long	get_time(void)
 {
@@ -22,21 +22,16 @@ long	get_time(void)
 	return (time);
 }
 
-void	threads_create(t_philo *philos, pthread_t *threads)
+void	process_create(t_philo *ph)
 {
-	int	i;
-	int	r;
+	int		i;
 
 	i = 0;
-	while (i < philos->nb_ph)
+	while (i < ph->nb_ph)
 	{
-		philos[i].last_meal = get_time();
-		r = pthread_create(&threads[i], NULL, philos_routine, &philos[i]);
-		if (r)
-		{
-			printf("Failed to create thread %d\n", i);
-			exit(1);
-		}
+		ph->pid[i] = fork();
+		if (ph->pid[i] == 0)
+			philos_routine(&ph[i]);
 		i++;
 	}
 	ft_usleep(1);
